@@ -3,6 +3,7 @@ import { Search, Star, SlidersHorizontal } from "lucide-react";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
+import { VerifiedTick } from "@/components/ui/VerifiedBadge";
 import { formatCurrencyCents } from "@/lib/utils";
 import type { Category, Gig, Profile } from "@/types/db";
 
@@ -17,7 +18,10 @@ type SP = {
 };
 
 type GigRow = Gig & {
-  athlete: Pick<Profile, "id" | "full_name" | "avatar_url" | "school" | "sport">;
+  athlete: Pick<
+    Profile,
+    "id" | "full_name" | "avatar_url" | "school" | "sport" | "verification_status"
+  >;
   packages: { price_cents: number; tier: string }[];
 };
 
@@ -46,7 +50,7 @@ export default async function BrowsePage({
       let query = supabase
         .from("gigs")
         .select(
-          "*, athlete:profiles!gigs_athlete_id_fkey(id, full_name, avatar_url, school, sport), packages:gig_packages(price_cents, tier)"
+          "*, athlete:profiles!gigs_athlete_id_fkey(id, full_name, avatar_url, school, sport, verification_status), packages:gig_packages(price_cents, tier)"
         )
         .eq("status", "active");
 
@@ -219,7 +223,10 @@ function GigCard({ gig }: { gig: GigRow }) {
       <div className="p-4">
         <div className="flex items-center gap-2 text-sm">
           <Avatar src={gig.athlete?.avatar_url} name={gig.athlete?.full_name} size={28} />
-          <span className="font-medium">{gig.athlete?.full_name}</span>
+          <span className="inline-flex items-center gap-1 font-medium">
+            {gig.athlete?.full_name}
+            <VerifiedTick status={gig.athlete?.verification_status ?? "unverified"} />
+          </span>
           {gig.athlete?.school ? (
             <Badge variant="brand" className="ml-auto">{gig.athlete.school}</Badge>
           ) : null}

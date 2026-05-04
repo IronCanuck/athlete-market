@@ -12,6 +12,7 @@ import {
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
+import { VerifiedBadge, VerifiedTick } from "@/components/ui/VerifiedBadge";
 import { formatCurrencyCents, timeAgo } from "@/lib/utils";
 import type { Gig, GigPackage, Profile, Review } from "@/types/db";
 import { PackageSelector } from "./PackageSelector";
@@ -78,8 +79,9 @@ export default async function GigPage({
             </h1>
             <div className="mt-3 flex items-center gap-3 text-sm">
               <Avatar src={gig.athlete.avatar_url} name={gig.athlete.full_name} size={36} />
-              <Link href={`/athletes/${gig.athlete.id}`} className="font-medium hover:underline">
+              <Link href={`/athletes/${gig.athlete.id}`} className="inline-flex items-center gap-1 font-medium hover:underline">
                 {gig.athlete.full_name}
+                <VerifiedTick status={gig.athlete.verification_status} />
               </Link>
               <span className="inline-flex items-center gap-1 text-[var(--color-fg-muted)]">
                 <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
@@ -87,6 +89,9 @@ export default async function GigPage({
                 <span>({gig.total_reviews ?? 0} reviews)</span>
               </span>
               <Badge variant="brand">{gig.athlete.school}</Badge>
+              {gig.athlete.verification_status === "verified" ? (
+                <VerifiedBadge status="verified" size="sm" />
+              ) : null}
             </div>
           </div>
 

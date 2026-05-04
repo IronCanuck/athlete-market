@@ -22,6 +22,7 @@ import { Logo } from "@/components/Logo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
+import { VerifiedTick } from "@/components/ui/VerifiedBadge";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import type { Category, Gig, Profile } from "@/types/db";
 import { formatCurrencyCents } from "@/lib/utils";
@@ -50,7 +51,10 @@ const FALLBACK_CATEGORIES: Category[] = [
 ];
 
 type FeaturedGig = Gig & {
-  athlete: Pick<Profile, "id" | "full_name" | "avatar_url" | "school" | "sport">;
+  athlete: Pick<
+    Profile,
+    "id" | "full_name" | "avatar_url" | "school" | "sport" | "verification_status"
+  >;
   packages: { price_cents: number }[];
 };
 
@@ -66,7 +70,7 @@ export default async function HomePage() {
         supabase
           .from("gigs")
           .select(
-            "*, athlete:profiles!gigs_athlete_id_fkey(id, full_name, avatar_url, school, sport), packages:gig_packages(price_cents)"
+            "*, athlete:profiles!gigs_athlete_id_fkey(id, full_name, avatar_url, school, sport, verification_status), packages:gig_packages(price_cents)"
           )
           .eq("status", "active")
           .order("rating", { ascending: false })
@@ -302,7 +306,10 @@ function FeaturedGigs({ gigs }: { gigs: FeaturedGig[] }) {
                     name={g.athlete.full_name}
                     size={28}
                   />
-                  <span className="font-medium">{g.athlete.full_name}</span>
+                  <span className="inline-flex items-center gap-1 font-medium">
+                    {g.athlete.full_name}
+                    <VerifiedTick status={g.athlete.verification_status} />
+                  </span>
                   <span className="text-[var(--color-fg-muted)]">
                     · {g.athlete.school ?? "—"}
                   </span>

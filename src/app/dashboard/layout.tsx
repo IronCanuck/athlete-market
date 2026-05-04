@@ -8,10 +8,13 @@ import {
   Wallet,
   UserCircle2,
   LogOut,
+  ShieldCheck,
+  GalleryHorizontalEnd,
 } from "lucide-react";
 import { requireUser } from "@/lib/auth";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
+import { VerifiedBadge } from "@/components/ui/VerifiedBadge";
 
 export default async function DashboardLayout({
   children,
@@ -38,12 +41,25 @@ export default async function DashboardLayout({
                 </div>
               </div>
             </div>
+            {isAthlete ? (
+              <div className="mt-3">
+                <VerifiedBadge status={profile?.verification_status ?? "unverified"} />
+              </div>
+            ) : null}
             {!profile?.onboarding_completed && isAthlete ? (
               <Link
                 href="/onboarding/athlete"
-                className="mt-4 block rounded-md bg-[var(--color-brand-soft)] px-3 py-2 text-xs font-medium text-[var(--color-brand)]"
+                className="mt-3 block rounded-md bg-[var(--color-brand-soft)] px-3 py-2 text-xs font-medium text-[var(--color-brand)]"
               >
                 Finish your profile →
+              </Link>
+            ) : null}
+            {isAthlete && profile?.verification_status !== "verified" ? (
+              <Link
+                href="/dashboard/verification"
+                className="mt-2 block rounded-md bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800"
+              >
+                Get verified →
               </Link>
             ) : null}
           </div>
@@ -53,8 +69,10 @@ export default async function DashboardLayout({
             {isAthlete ? (
               <>
                 <NavItem href="/dashboard/gigs" icon={<Package className="h-4 w-4" />}>My gigs</NavItem>
+                <NavItem href="/dashboard/portfolio" icon={<GalleryHorizontalEnd className="h-4 w-4" />}>Portfolio</NavItem>
                 <NavItem href="/dashboard/availability" icon={<CalendarClock className="h-4 w-4" />}>Availability</NavItem>
                 <NavItem href="/dashboard/earnings" icon={<Wallet className="h-4 w-4" />}>Earnings</NavItem>
+                <NavItem href="/dashboard/verification" icon={<ShieldCheck className="h-4 w-4" />}>Verification</NavItem>
               </>
             ) : null}
             <NavItem href="/dashboard/orders" icon={<ShoppingBag className="h-4 w-4" />}>Orders</NavItem>

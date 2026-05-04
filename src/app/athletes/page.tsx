@@ -3,6 +3,7 @@ import { Trophy } from "lucide-react";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
+import { VerifiedTick } from "@/components/ui/VerifiedBadge";
 import type { Profile } from "@/types/db";
 
 export const metadata = { title: "Athletes · Athlete Market" };
@@ -43,7 +44,10 @@ export default async function AthletesPage() {
             <Link key={a.id} href={`/athletes/${a.id}`} className="card flex items-start gap-4 p-5 transition hover:shadow-md">
               <Avatar src={a.avatar_url} name={a.full_name} size={56} />
               <div className="min-w-0">
-                <div className="font-semibold">{a.full_name}</div>
+                <div className="flex items-center gap-1.5 font-semibold">
+                  <span className="truncate">{a.full_name}</span>
+                  <VerifiedTick status={a.verification_status} />
+                </div>
                 <div className="mt-0.5 text-xs text-[var(--color-fg-muted)]">
                   <span className="inline-flex items-center gap-1">
                     <Trophy className="h-3 w-3" /> {a.sport ?? "—"}

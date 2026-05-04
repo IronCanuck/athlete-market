@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trophy, ShoppingBag } from "lucide-react";
+import { Trophy, ShoppingBag, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
@@ -101,7 +101,18 @@ export function SignUpForm({ defaultRole = "buyer" }: { defaultRole?: Role }) {
         onChange={(e) => setEmail(e.target.value)}
         required
         autoComplete="email"
+        hint={
+          role === "athlete"
+            ? "Tip: use your school .edu email to get auto-verified."
+            : undefined
+        }
       />
+      {role === "athlete" && email.toLowerCase().endsWith(".edu") ? (
+        <p className="flex items-center gap-1.5 -mt-2 text-xs font-medium text-emerald-700">
+          <BadgeCheck className="h-4 w-4" />
+          School email detected — you&apos;ll be auto-verified.
+        </p>
+      ) : null}
       <Input
         label="Password"
         name="password"

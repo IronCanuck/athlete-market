@@ -1,10 +1,18 @@
 import { requireUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { ProfileForm } from "./ProfileForm";
+import type { AthleteSport } from "@/types/db";
 
 export const metadata = { title: "Profile · Athlete Market" };
 
 export default async function ProfileSettingsPage() {
-  const { profile } = await requireUser();
+  const { user, profile } = await requireUser();
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("athlete_sports")
+    .select("*")
+    .eq("athlete_id", user.id)
+    .order("is_primary", { ascending: false });
   return (
     <div className="space-y-6">
       <header>
@@ -13,7 +21,10 @@ export default async function ProfileSettingsPage() {
           Update your public profile.
         </p>
       </header>
-      <ProfileForm initial={profile} />
+      <ProfileForm
+        initial={profile}
+        initialSports={(data ?? []) as AthleteSport[]}
+      />
     </div>
   );
 }

@@ -14,6 +14,38 @@ export type AcademicYear =
   | "junior"
   | "senior"
   | "graduate";
+export type VerificationStatus =
+  | "unverified"
+  | "pending"
+  | "verified"
+  | "rejected";
+export type VerificationMethod =
+  | "edu_email"
+  | "roster_link"
+  | "id_card"
+  | "nil_letter"
+  | "coach_reference";
+export type AthleticDivision =
+  | "NCAA_D1"
+  | "NCAA_D2"
+  | "NCAA_D3"
+  | "NAIA"
+  | "JUCO"
+  | "HS"
+  | "CLUB"
+  | "PROFESSIONAL";
+export type PortfolioType = "image" | "video" | "link" | "document";
+
+export const DIVISION_LABELS: Record<AthleticDivision, string> = {
+  NCAA_D1: "NCAA Division I",
+  NCAA_D2: "NCAA Division II",
+  NCAA_D3: "NCAA Division III",
+  NAIA: "NAIA",
+  JUCO: "JUCO / NJCAA",
+  HS: "High School",
+  CLUB: "Club",
+  PROFESSIONAL: "Professional",
+};
 
 export type Profile = {
   id: string;
@@ -37,8 +69,52 @@ export type Profile = {
   total_reviews: number | null;
   total_earnings_cents: number | null;
   onboarding_completed: boolean | null;
+  verification_status: VerificationStatus;
+  verified_at: string | null;
+  division: AthleticDivision | null;
+  conference: string | null;
+  team_name: string | null;
+  school_city: string | null;
+  school_state: string | null;
+  portfolio_count: number | null;
   created_at: string;
   updated_at: string;
+};
+
+export type AthleteSport = {
+  id: string;
+  athlete_id: string;
+  sport: string;
+  position: string | null;
+  is_primary: boolean;
+  jersey_number: number | null;
+  years_played: number | null;
+  created_at: string;
+};
+
+export type PortfolioItem = {
+  id: string;
+  athlete_id: string;
+  type: PortfolioType;
+  url: string;
+  thumbnail_url: string | null;
+  title: string | null;
+  description: string | null;
+  position: number;
+  created_at: string;
+};
+
+export type Verification = {
+  id: string;
+  athlete_id: string;
+  method: VerificationMethod;
+  proof_url: string | null;
+  proof_data: Record<string, unknown> | null;
+  status: VerificationStatus;
+  notes: string | null;
+  submitted_at: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
 };
 
 export type Category = {

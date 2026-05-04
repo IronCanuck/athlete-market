@@ -11,6 +11,11 @@ import type { GigStatus, PackageTier } from "@/types/db";
 
 type CategoryOption = { id: string; name: string; slug: string };
 
+type GigFormProps = {
+  categories: CategoryOption[];
+  canPublish?: boolean;
+};
+
 type PackageDraft = {
   tier: PackageTier;
   title: string;
@@ -27,7 +32,7 @@ const DEFAULT_PACKAGES: PackageDraft[] = [
   { tier: "premium", title: "Premium", description: "", price: "300", delivery_days: "7", revisions: "3", features: "" },
 ];
 
-export function GigForm({ categories }: { categories: CategoryOption[] }) {
+export function GigForm({ categories, canPublish = true }: GigFormProps) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +41,7 @@ export function GigForm({ categories }: { categories: CategoryOption[] }) {
   const [categoryId, setCategoryId] = useState(categories[0]?.id ?? "");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState("");
-  const [status, setStatus] = useState<GigStatus>("active");
+  const [status, setStatus] = useState<GigStatus>(canPublish ? "active" : "draft");
   const [packages, setPackages] = useState<PackageDraft[]>(DEFAULT_PACKAGES);
 
   function updatePackage(i: number, patch: Partial<PackageDraft>) {
@@ -147,7 +152,9 @@ export function GigForm({ categories }: { categories: CategoryOption[] }) {
             onChange={(e) => setStatus(e.target.value as GigStatus)}
           >
             <option value="draft">Draft (not visible)</option>
-            <option value="active">Active</option>
+            <option value="active" disabled={!canPublish}>
+              Active{canPublish ? "" : " — verify to unlock"}
+            </option>
             <option value="paused">Paused</option>
           </Select>
           <div className="md:col-span-2">
